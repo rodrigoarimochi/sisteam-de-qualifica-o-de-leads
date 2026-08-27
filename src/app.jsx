@@ -1,24 +1,5 @@
 /* ==================================================================== *
  * LEADFINDER — versão com login/cadastro REAIS via Supabase
- * ====================================================================
- * COMO USAR (resumo — passo a passo completo está na conversa):
- *
- * 1) Crie um projeto grátis em https://supabase.com (não pede cartão).
- * 2) Em Project Settings > API, copie "Project URL" e "anon public key"
- *    e cole nas duas constantes logo abaixo (SUPABASE_URL / SUPABASE_ANON_KEY).
- * 3) Nesse projeto React (fora do Claude), rode:
- *      npm install @supabase/supabase-js
- * 4) Suba o projeto no GitHub e conecte na Vercel (vercel.com) ou
- *    Netlify (netlify.com) — ambos grátis, sem cartão.
- *
- * ADMINISTRAR QUEM ENTRA:
- * - No painel da Supabase, Authentication > Users mostra todo mundo que
- *   se cadastrou. Dá pra apagar ou banir qualquer um, sem código.
- * - Se você NÃO quiser que qualquer pessoa se cadastre sozinha:
- *   a) Vá em Authentication > Settings e desative "Allow new users to sign up".
- *   b) Troque ALLOW_SELF_SIGNUP para false aqui embaixo, pra esconder o
- *      botão "Criar conta" do site. Só entra quem você mesmo cadastrar
- *      manualmente no painel (Authentication > Users > "Add user").
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -47,11 +28,11 @@ import {
   Inbox,
 } from "lucide-react";
 
-/* ---- COLE AQUI a URL e a chave "anon public" do seu projeto Supabase ---- */
-const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+/* ---- CONEXÃO COM O SUPABASE ---- */
+const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
-// Troque para false se quiser que só você cadastre usuários pelo painel da Supabase
 const ALLOW_SELF_SIGNUP = true;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -60,6 +41,19 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
  * HELPERS
  * ------------------------------------------------------------------ */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function sessionToUser(session) {
+  if (!session?.user) return null;
+  const user = session.user;
+  return {
+    id: user.id,
+    email: user.email,
+    name:
+      user.user_metadata?.full_name ||
+      user.email.split("@")[0] ||
+      "Usuário",
+  };
+}
 
 function maskCnpj(digits) {
   const d = digits.slice(0, 14);
@@ -104,7 +98,7 @@ function supabaseErrorMessage(message = "") {
  * TELA DE AUTENTICAÇÃO
  * ------------------------------------------------------------------ */
 function AuthScreen() {
-  const [mode, setMode] = useState("login"); // 'login' | 'cadastro'
+  const [mode, setMode] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -150,23 +144,21 @@ function AuthScreen() {
           setError(supabaseErrorMessage(signUpError.message));
           return;
         }
-        // Se a confirmação de e-mail estiver ativada no projeto, ainda
-        // não existe sessão logo após o cadastro.
         if (data.user && !data.session) {
           setNotice(
             "Conta criada! Confira seu e-mail para confirmar o cadastro antes de entrar."
           );
         }
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword(
-          { email: email.trim(), password }
-        );
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
         if (signInError) {
           setError(supabaseErrorMessage(signInError.message));
           return;
         }
       }
-      // onAuthStateChange (no App raiz) cuida do redirecionamento
     } catch (err) {
       setError("Não foi possível conectar. Verifique sua internet e tente de novo.");
     } finally {
@@ -320,8 +312,7 @@ function AuthScreen() {
 
         {!ALLOW_SELF_SIGNUP && (
           <p className="text-center text-xs text-zinc-600 mt-6">
-            Acesso apenas por convite. Fale com o administrador para receber
-            um login.
+            Acesso apenas por convite. Fale com o administrador para receber um login.
           </p>
         )}
       </div>
@@ -357,12 +348,9 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-20 text-center px-6">
       <Inbox className="h-9 w-9 text-zinc-700" />
-      <p className="text-sm font-medium text-zinc-300">
-        Nenhum resultado ainda
-      </p>
+      <p className="text-sm font-medium text-zinc-300">Nenhum resultado ainda</p>
       <p className="text-sm text-zinc-500 max-w-sm">
-        Use a busca acima por nicho e cidade, ou informe um CNPJ, para
-        encontrar leads.
+        Use a busca acima por nicho e cidade, ou informe um CNPJ, para encontrar leads.
       </p>
     </div>
   );
@@ -372,7 +360,7 @@ function EmptyState() {
  * PAINEL PRINCIPAL (DASHBOARD)
  * ------------------------------------------------------------------ */
 function Dashboard({ currentUser }) {
-  const [activeTab, setActiveTab] = useState("nicho"); // 'nicho' | 'cnpj'
+  const [activeTab, setActiveTab] = useState("nicho");
   const [nicho, setNicho] = useState("");
   const [cidade, setCidade] = useState("");
   const [cnpjInput, setCnpjInput] = useState("");
@@ -402,9 +390,7 @@ function Dashboard({ currentUser }) {
 
       if (!Array.isArray(data) || data.length === 0) {
         setLeads([]);
-        setError(
-          `Nenhum estabelecimento encontrado para "${nicho}" em "${cidade}".`
-        );
+        setError(`Nenhum estabelecimento encontrado para "${nicho}" em "${cidade}".`);
         return;
       }
 
@@ -416,17 +402,12 @@ function Dashboard({ currentUser }) {
         socios: "Não disponível",
         email: "Não disponível",
         telefone: "",
-        ramo: item.type
-          ? item.type.replaceAll("_", " ")
-          : item.class || "Não informado",
+        ramo: item.type ? item.type.replaceAll("_", " ") : item.class || "Não informado",
       }));
       setLeads(mapped);
     } catch (err) {
       setLeads([]);
-      setError(
-        err.message ||
-          "Erro ao consultar o OpenStreetMap. Tente novamente em instantes."
-      );
+      setError(err.message || "Erro ao consultar o OpenStreetMap. Tente novamente.");
     } finally {
       setLoading(false);
       setHasSearched(true);
@@ -456,19 +437,12 @@ function Dashboard({ currentUser }) {
           ? data.qsa.map((s) => s.nome_socio).join(", ")
           : "Não informado";
 
-      const telefoneDigits = data.ddd_telefone_1
-        ? data.ddd_telefone_1.replace(/\D/g, "")
-        : "";
+      const telefoneDigits = data.ddd_telefone_1 ? data.ddd_telefone_1.replace(/\D/g, "") : "";
 
       const lead = {
         id: `cnpj-${data.cnpj}`,
-        empresa:
-          (data.nome_fantasia && data.nome_fantasia.trim()) ||
-          data.razao_social ||
-          "Sem razão social",
-        endereco: [data.logradouro, data.municipio, data.uf]
-          .filter(Boolean)
-          .join(", "),
+        empresa: (data.nome_fantasia && data.nome_fantasia.trim()) || data.razao_social || "Sem razão social",
+        endereco: [data.logradouro, data.municipio, data.uf].filter(Boolean).join(", "),
         cnpj: formatCnpjDisplay(data.cnpj),
         socios,
         email: data.email || "Não disponível",
@@ -478,10 +452,7 @@ function Dashboard({ currentUser }) {
       setLeads([lead]);
     } catch (err) {
       setLeads([]);
-      setError(
-        err.message ||
-          "Erro ao consultar a BrasilAPI. Tente novamente em instantes."
-      );
+      setError(err.message || "Erro ao consultar a BrasilAPI. Tente novamente.");
     } finally {
       setLoading(false);
       setHasSearched(true);
@@ -503,28 +474,10 @@ function Dashboard({ currentUser }) {
 
   const exportCSV = () => {
     if (leads.length === 0) return;
-    const headers = [
-      "Empresa",
-      "CNPJ",
-      "Sócios/Decisores",
-      "E-mail",
-      "Telefone",
-      "Ramo de Atuação",
-    ];
-    const rows = leads.map((l) => [
-      l.empresa,
-      l.cnpj,
-      l.socios,
-      l.email,
-      l.telefone || "Não disponível",
-      l.ramo,
-    ]);
-    const csv = [headers, ...rows]
-      .map((r) => r.map(csvEscape).join(","))
-      .join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], {
-      type: "text/csv;charset=utf-8;",
-    });
+    const headers = ["Empresa", "CNPJ", "Sócios/Decisores", "E-mail", "Telefone", "Ramo de Atuação"];
+    const rows = leads.map((l) => [l.empresa, l.cnpj, l.socios, l.email, l.telefone || "Não disponível", l.ramo]);
+    const csv = [headers, ...rows].map((r) => r.map(csvEscape).join(",")).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -543,25 +496,20 @@ function Dashboard({ currentUser }) {
             <div className="h-9 w-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center">
               <Radar className="h-5 w-5 text-amber-400" />
             </div>
-            <span className="text-lg font-bold text-zinc-50 tracking-tight">
-              LeadFinder
-            </span>
+            <span className="text-lg font-bold text-zinc-50 tracking-tight">LeadFinder</span>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-full pl-2.5 pr-3 py-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               <span className="text-xs text-zinc-400">Sessão ativa</span>
-              <span className="text-xs text-zinc-200 font-medium">
-                · {currentUser.name}
-              </span>
+              <span className="text-xs text-zinc-200 font-medium">· {currentUser.name}</span>
             </div>
             <button
               onClick={() => supabase.auth.signOut()}
               className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-red-400 border border-zinc-800 hover:border-red-500/40 hover:bg-red-500/10 rounded-lg px-3 py-1.5 transition-colors"
             >
-              <LogOut className="h-4 w-4" />
-              Sair
+              <LogOut className="h-4 w-4" /> Sair
             </button>
           </div>
         </div>
@@ -577,13 +525,10 @@ function Dashboard({ currentUser }) {
                 setError("");
               }}
               className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === "nicho"
-                  ? "bg-amber-400 text-zinc-950"
-                  : "text-zinc-400 hover:text-zinc-200"
+                activeTab === "nicho" ? "bg-amber-400 text-zinc-950" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              <MapPin className="h-4 w-4" />
-              Nicho e cidade
+              <MapPin className="h-4 w-4" /> Nicho e cidade
             </button>
             <button
               type="button"
@@ -592,20 +537,14 @@ function Dashboard({ currentUser }) {
                 setError("");
               }}
               className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === "cnpj"
-                  ? "bg-amber-400 text-zinc-950"
-                  : "text-zinc-400 hover:text-zinc-200"
+                activeTab === "cnpj" ? "bg-amber-400 text-zinc-950" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              <Hash className="h-4 w-4" />
-              CNPJ
+              <Hash className="h-4 w-4" /> CNPJ
             </button>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row gap-3"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
             {activeTab === "nicho" ? (
               <>
                 <div className="relative flex-1">
@@ -646,13 +585,9 @@ function Dashboard({ currentUser }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 disabled:cursor-not-allowed text-zinc-950 font-semibold rounded-lg px-5 py-2.5 text-sm transition-colors whitespace-nowrap"
+              className="flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-zinc-950 font-semibold rounded-lg px-5 py-2.5 text-sm transition-colors whitespace-nowrap"
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4" />
-              )}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               Pesquisar
             </button>
           </form>
@@ -662,18 +597,15 @@ function Dashboard({ currentUser }) {
           <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-4 border-b border-zinc-800">
             <p className="text-sm text-zinc-400">
               {leads.length > 0
-                ? `${leads.length} lead${leads.length > 1 ? "s" : ""} encontrado${
-                    leads.length > 1 ? "s" : ""
-                  }`
+                ? `${leads.length} lead${leads.length > 1 ? "s" : ""} encontrado${leads.length > 1 ? "s" : ""}`
                 : "Resultados da busca"}
             </p>
             <button
               onClick={exportCSV}
               disabled={leads.length === 0}
-              className="flex items-center gap-2 text-sm border border-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed hover:border-amber-400/60 hover:text-amber-400 text-zinc-300 rounded-lg px-3.5 py-2 transition-colors"
+              className="flex items-center gap-2 text-sm border border-zinc-700 disabled:opacity-40 hover:border-amber-400/60 hover:text-amber-400 text-zinc-300 rounded-lg px-3.5 py-2 transition-colors"
             >
-              <Download className="h-4 w-4" />
-              Exportar CSV
+              <Download className="h-4 w-4" /> Exportar CSV
             </button>
           </div>
 
@@ -688,53 +620,34 @@ function Dashboard({ currentUser }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-zinc-800/50 text-zinc-400 text-xs uppercase tracking-wider">
-                    <th className="px-4 py-3 text-left font-medium">
-                      Empresa
-                    </th>
+                    <th className="px-4 py-3 text-left font-medium">Empresa</th>
                     <th className="px-4 py-3 text-left font-medium">CNPJ</th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      Sócios / Decisores
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      E-mail
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      Telefone
-                    </th>
+                    <th className="px-4 py-3 text-left font-medium">Sócios / Decisores</th>
+                    <th className="px-4 py-3 text-left font-medium">E-mail</th>
+                    <th className="px-4 py-3 text-left font-medium">Telefone</th>
                     <th className="px-4 py-3 text-left font-medium">Ramo</th>
                     <th className="px-4 py-3 text-left font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800">
                   {leads.map((lead) => (
-                    <tr
-                      key={lead.id}
-                      className="hover:bg-zinc-800/40 transition-colors align-top"
-                    >
+                    <tr key={lead.id} className="hover:bg-zinc-800/40 transition-colors align-top">
                       <td className="px-4 py-3">
                         <div className="flex items-start gap-2">
                           <Building2 className="h-4 w-4 text-zinc-500 mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className="font-medium text-zinc-100">
-                              {lead.empresa}
-                            </p>
+                            <p className="font-medium text-zinc-100">{lead.empresa}</p>
                             {lead.endereco && (
-                              <p className="text-xs text-zinc-500 max-w-xs truncate">
-                                {lead.endereco}
-                              </p>
+                              <p className="text-xs text-zinc-500 max-w-xs truncate">{lead.endereco}</p>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 font-mono text-zinc-300 whitespace-nowrap">
-                        {lead.cnpj}
-                      </td>
+                      <td className="px-4 py-3 font-mono text-zinc-300 whitespace-nowrap">{lead.cnpj}</td>
                       <td className="px-4 py-3 text-zinc-300 max-w-xs">
                         <div className="flex items-start gap-2">
                           <UsersIcon className="h-4 w-4 text-zinc-500 mt-0.5 flex-shrink-0" />
-                          <span className="truncate block">
-                            {lead.socios}
-                          </span>
+                          <span className="truncate block">{lead.socios}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-zinc-300 max-w-xs">
@@ -759,12 +672,7 @@ function Dashboard({ currentUser }) {
                         <button
                           onClick={() => handleWhatsApp(lead)}
                           disabled={!lead.telefone}
-                          title={
-                            lead.telefone
-                              ? "Chamar no WhatsApp"
-                              : "Telefone indisponível"
-                          }
-                          className="flex items-center justify-center h-9 w-9 rounded-full border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          className="flex items-center justify-center h-9 w-9 rounded-full border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-30 transition-colors"
                         >
                           <MessageCircle className="h-4 w-4" />
                         </button>
@@ -776,14 +684,6 @@ function Dashboard({ currentUser }) {
             </div>
           )}
         </section>
-
-        {activeTab === "nicho" && hasSearched && leads.length > 0 && (
-          <p className="text-xs text-zinc-600 -mt-3 px-1">
-            A busca por nicho e cidade usa o OpenStreetMap, que não fornece
-            CNPJ, sócios, e-mail ou telefone. Para enriquecer um lead com
-            esses dados, pesquise o CNPJ dele na aba "CNPJ".
-          </p>
-        )}
       </main>
     </div>
   );
@@ -797,45 +697,27 @@ export default function App() {
   const [checkedSession, setCheckedSession] = useState(false);
 
   useEffect(() => {
-    // Verifica se já existe uma sessão salva (sobrevive a um F5 de verdade)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(sessionToUser(session));
       setCheckedSession(true);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setCurrentUser(sessionToUser(session));
-      }
-    );
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(sessionToUser(session));
+    });
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
-  function sessionToUser(session) {
-    if (!session?.user) return null;
-    return {
-      name: session.user.user_metadata?.full_name || session.user.email,
-      email: session.user.email,
-    };
+  if (!checkedSession) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+      </div>
+    );
   }
 
-  if (!checkedSession) return null;
-
-  return (
-    <div className="font-sans">
-      <style>{`
-        @keyframes radarSweep { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-        .radar-spin { animation: radarSweep 4s linear infinite; }
-        @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:translateY(0);} }
-        .fade-in { animation: fadeIn .25s ease-out; }
-      `}</style>
-
-      {currentUser ? (
-        <Dashboard currentUser={currentUser} />
-      ) : (
-        <AuthScreen />
-      )}
-    </div>
-  );
+  return currentUser ? <Dashboard currentUser={currentUser} /> : <AuthScreen />;
 }

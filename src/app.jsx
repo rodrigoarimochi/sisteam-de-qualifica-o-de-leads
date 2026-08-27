@@ -700,6 +700,11 @@ export default function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(sessionToUser(session));
       setCheckedSession(true);
+
+      // Limpa os tokens da URL quando redirecionado pelo e-mail
+      if (window.location.hash.includes("access_token")) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Layout Atualizado
+ * LEADFINDER — Layout Idêntico às Imagens (Com Dropdowns e Métricas)
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -15,16 +15,13 @@ import {
   User,
   Eye,
   EyeOff,
-  Inbox,
-  Briefcase,
-  MapPin,
-  Target
+  Inbox
 } from "lucide-react";
 
 /* ---- CONEXÃO COM O SUPABASE ---- */
 const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6IZEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -96,26 +93,21 @@ function AuthScreen() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#121316] text-zinc-100 flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-md bg-[#1a1c23] border border-zinc-800 rounded-xl p-6 sm:p-8 shadow-2xl">
+    <div className="min-h-screen w-full bg-[#0d0e12] text-zinc-100 flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-md bg-[#16181e] border border-zinc-800 rounded-lg p-6 sm:p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-6">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center">
-              <Target className="h-5 w-5 text-amber-400" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              LeadFinder
-            </h1>
-          </div>
-          <p className="text-xs text-zinc-400">Prospecção B2B Automatizada</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white mb-1">
+            Prospecção Ativa
+          </h1>
+          <p className="text-xs text-zinc-400">Qualificação B2B Automatizada</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-1 bg-[#121316] rounded-lg p-1 mb-6 border border-zinc-800">
+        <div className="grid grid-cols-2 gap-1 bg-[#0d0e12] rounded p-1 mb-6 border border-zinc-800">
           <button
             type="button"
             onClick={() => setMode("login")}
             className={`py-2 text-xs font-semibold rounded transition-colors ${
-              mode === "login" ? "bg-amber-500 text-zinc-950 font-bold" : "text-zinc-400 hover:text-white"
+              mode === "login" ? "bg-orange-600 text-white font-bold" : "text-zinc-400 hover:text-white"
             }`}
           >
             Entrar
@@ -124,7 +116,7 @@ function AuthScreen() {
             type="button"
             onClick={() => setMode("cadastro")}
             className={`py-2 text-xs font-semibold rounded transition-colors ${
-              mode === "cadastro" ? "bg-amber-500 text-zinc-950 font-bold" : "text-zinc-400 hover:text-white"
+              mode === "cadastro" ? "bg-orange-600 text-white font-bold" : "text-zinc-400 hover:text-white"
             }`}
           >
             Criar conta
@@ -134,14 +126,14 @@ function AuthScreen() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "cadastro" && (
             <div>
-              <label className="block text-xs text-zinc-400 mb-1">Nome completo</label>
+              <label className="block text-xs text-zinc-400 mb-1 uppercase tracking-wider font-semibold">Nome completo</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#121316] border border-zinc-700/80 rounded-lg py-2 pl-9 pr-3 text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-[#0d0e12] border border-zinc-800 rounded py-2 pl-9 pr-3 text-sm text-zinc-100 focus:outline-none focus:border-orange-500"
                   required
                 />
               </div>
@@ -149,28 +141,28 @@ function AuthScreen() {
           )}
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">E-mail</label>
+            <label className="block text-xs text-zinc-400 mb-1 uppercase tracking-wider font-semibold">E-mail</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#121316] border border-zinc-700/80 rounded-lg py-2 pl-9 pr-3 text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#0d0e12] border border-zinc-800 rounded py-2 pl-9 pr-3 text-sm text-zinc-100 focus:outline-none focus:border-orange-500"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-zinc-400 mb-1">Senha</label>
+            <label className="block text-xs text-zinc-400 mb-1 uppercase tracking-wider font-semibold">Senha</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#121316] border border-zinc-700/80 rounded-lg py-2 pl-9 pr-9 text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#0d0e12] border border-zinc-800 rounded py-2 pl-9 pr-9 text-sm text-zinc-100 focus:outline-none focus:border-orange-500"
                 required
               />
               <button
@@ -200,7 +192,7 @@ function AuthScreen() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded-lg py-2.5 text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold rounded py-2.5 text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "login" ? "Entrar" : "Cadastrar"}
           </button>
@@ -214,10 +206,9 @@ function AuthScreen() {
  * PAINEL PRINCIPAL
  * ------------------------------------------------------------------ */
 function Dashboard({ currentUser }) {
-  const [searchTab, setSearchTab] = useState("nicho");
-  const [nichoInput, setNichoInput] = useState("");
-  const [cidadeInput, setCidadeInput] = useState("");
-  const [cnpjInput, setCnpjInput] = useState("");
+  const [nicho, setNicho] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [quantidade, setQuantidade] = useState("50");
 
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -231,23 +222,13 @@ function Dashboard({ currentUser }) {
   const searchLeads = async (e) => {
     if (e) e.preventDefault();
 
-    if (searchTab === "nicho" && !cidadeInput.trim() && !nichoInput.trim()) {
-      setError("Informe o nicho ou a cidade para pesquisar.");
-      return;
-    }
-
-    if (searchTab === "cnpj" && !cnpjInput.trim()) {
-      setError("Informe o CNPJ para realizar a consulta.");
-      return;
-    }
-
     setLoading(true);
     setError("");
 
     try {
-      let queryStr = searchTab === "nicho" ? `${nichoInput} ${cidadeInput}`.trim() : cnpjInput.trim();
+      const queryStr = `${nicho || "Empresas"} ${cidade || "Brasil"}`.trim();
       const osmRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryStr)}&format=json&addressdetails=1&limit=20&countrycodes=br`
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryStr)}&format=json&addressdetails=1&limit=${quantidade}&countrycodes=br`
       );
 
       if (!osmRes.ok) throw new Error("Erro ao consultar serviço de busca.");
@@ -255,7 +236,7 @@ function Dashboard({ currentUser }) {
 
       if (!Array.isArray(places) || places.length === 0) {
         setLeads([]);
-        setError("Nenhum registro localizado para os termos digitados.");
+        setError("Nenhum registro localizado para os filtros selecionados.");
         return;
       }
 
@@ -274,7 +255,6 @@ function Dashboard({ currentUser }) {
           id: place.place_id || `lead-${idx}`,
           empresa: title,
           site: `${cleanName}.com.br`,
-          ramoCidade: `${(nichoInput || "SERVIÇOS").toUpperCase()} · ${(cidadeInput || "BRASIL").toUpperCase()}`,
           cnpj: `${Math.floor(10 + Math.random() * 80)}.${Math.floor(100 + Math.random() * 800)}.${Math.floor(100 + Math.random() * 800)}/0001-${Math.floor(10 + Math.random() * 80)}`,
           socios: `${decisorNome}, ${socioExtra}`,
           decisorName: decisorNome,
@@ -332,106 +312,144 @@ function Dashboard({ currentUser }) {
   });
 
   return (
-    <div className="min-h-screen bg-[#0e0f12] text-zinc-100 font-sans flex flex-col">
-      <header className="border-b border-zinc-800/80 bg-[#121316] px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center">
-            <Target className="h-5 w-5 text-amber-400" />
-          </div>
-          <span className="text-lg font-bold text-white tracking-tight">LeadFinder</span>
-        </div>
+    <div className="min-h-screen bg-[#0d0e12] text-zinc-100 font-sans flex flex-col">
+      {/* HEADER */}
+      <header className="border-b border-zinc-800 bg-[#14161c] px-6 py-4 flex items-center justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight text-white">Prospecção Ativa</h1>
 
         <div className="flex items-center gap-3">
-          <div className="bg-[#1a1c22] border border-zinc-800 rounded-full px-3 py-1 flex items-center gap-2 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-zinc-400">Sessão ativa · </span>
-            <span className="text-white font-medium">{currentUser.name.toLowerCase()}</span>
-          </div>
+          <button
+            onClick={exportCSV}
+            disabled={leads.length === 0}
+            className="border border-zinc-700 hover:bg-zinc-800 disabled:opacity-40 text-zinc-300 text-xs px-4 py-2 font-bold uppercase tracking-wider transition-colors"
+          >
+            EXPORTAR .CSV
+          </button>
+
+          <button
+            onClick={searchLeads}
+            disabled={loading}
+            className="bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs px-5 py-2 uppercase tracking-wider transition-colors flex items-center gap-2"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "PESQUISAR LEADS"}
+          </button>
 
           <button
             onClick={() => supabase.auth.signOut()}
-            className="bg-[#1a1c22] border border-zinc-800 hover:bg-zinc-800 text-zinc-300 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+            className="text-zinc-400 hover:text-white p-2"
+            title="Sair"
           >
-            <LogOut className="h-3.5 w-3.5" />
-            Sair
+            <LogOut className="h-4 w-4" />
           </button>
         </div>
       </header>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        <div className="bg-[#14161c] border border-zinc-800/80 rounded-xl p-5 shadow-lg">
-          <div className="flex items-center gap-2 mb-4">
-            <button
-              onClick={() => setSearchTab("nicho")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-                searchTab === "nicho"
-                  ? "bg-amber-400 text-zinc-950 font-bold"
-                  : "bg-[#1d1f27] text-zinc-400 hover:text-zinc-200 border border-zinc-800"
-              }`}
-            >
-              <MapPin className="h-3.5 w-3.5" />
-              Nicho e cidade
-            </button>
-
-            <button
-              onClick={() => setSearchTab("cnpj")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-                searchTab === "cnpj"
-                  ? "bg-amber-400 text-zinc-950 font-bold"
-                  : "bg-[#1d1f27] text-zinc-400 hover:text-zinc-200 border border-zinc-800"
-              }`}
-            >
-              <span className="text-xs font-bold">#</span>
-              CNPJ
-            </button>
+        {/* CARDS DE MÉTRICAS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-[#14161c] border border-zinc-800 p-5">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
+              TOTAL PROSPECTADO
+            </span>
+            <span className="text-3xl font-extrabold text-white">{leads.length || 50}</span>
           </div>
 
-          <form onSubmit={searchLeads} className="flex flex-col md:flex-row gap-3">
-            {searchTab === "nicho" ? (
-              <>
-                <div className="relative flex-1">
-                  <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-                  <input
-                    type="text"
-                    value={nichoInput}
-                    onChange={(e) => setNichoInput(e.target.value)}
-                    placeholder="Nicho — ex: Clínica Odontológica"
-                    className="w-full bg-[#0c0d10] border border-zinc-800 rounded-lg pl-10 pr-3 py-2.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+          <div className="bg-[#14161c] border border-zinc-800 p-5">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
+              TAXA DE RESPOSTA
+            </span>
+            <span className="text-3xl font-extrabold text-orange-500">12.0%</span>
+          </div>
 
-                <div className="relative flex-1">
-                  <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-                  <input
-                    type="text"
-                    value={cidadeInput}
-                    onChange={(e) => setCidadeInput(e.target.value)}
-                    placeholder="Cidade — ex: Curitiba"
-                    className="w-full bg-[#0c0d10] border border-zinc-800 rounded-lg pl-10 pr-3 py-2.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="relative flex-1">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs font-bold">#</span>
-                <input
-                  type="text"
-                  value={cnpjInput}
-                  onChange={(e) => setCnpjInput(e.target.value)}
-                  placeholder="Digite o CNPJ (apenas números ou formatado)"
-                  className="w-full bg-[#0c0d10] border border-zinc-800 rounded-lg pl-10 pr-3 py-2.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-            )}
+          <div className="bg-[#14161c] border border-zinc-800 p-5">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
+              QUALIFICADOS
+            </span>
+            <span className="text-3xl font-extrabold text-white">6</span>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold text-xs px-6 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors flex-shrink-0"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              Pesquisar
-            </button>
+          <div className="bg-[#14161c] border border-zinc-800 p-5">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
+              CRÉDITOS RESTANTES
+            </span>
+            <span className="text-3xl font-extrabold text-white">850</span>
+          </div>
+        </div>
+
+        {/* BARRA DE FILTROS E BUSCA DROPDOWN */}
+        <div className="bg-[#14161c] border border-zinc-800 p-5">
+          <form onSubmit={searchLeads} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div className="md:col-span-4">
+              <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                NICHO / SETOR
+              </label>
+              <select
+                value={nicho}
+                onChange={(e) => setNicho(e.target.value)}
+                className="w-full bg-[#0d0e12] border border-orange-500/80 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none"
+              >
+                <option value="">Todos os nichos</option>
+                <option value="Odontologia">Odontologia</option>
+                <option value="Advocacia">Advocacia</option>
+                <option value="Clínicas Médicas">Clínicas Médicas</option>
+                <option value="Contabilidade">Contabilidade</option>
+                <option value="Tecnologia & SaaS">Tecnologia & SaaS</option>
+                <option value="Academias & Fitness">Academias & Fitness</option>
+                <option value="Imobiliárias">Imobiliárias</option>
+                <option value="Logística">Logística</option>
+                <option value="Arquitetura">Arquitetura</option>
+                <option value="Estética & Beleza">Estética & Beleza</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-4">
+              <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                CIDADE / ESTADO
+              </label>
+              <select
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none focus:border-orange-500"
+              >
+                <option value="">Ex: São Paulo, SP</option>
+                <option value="São Paulo, SP">São Paulo, SP</option>
+                <option value="Rio de Janeiro, RJ">Rio de Janeiro, RJ</option>
+                <option value="Belo Horizonte, MG">Belo Horizonte, MG</option>
+                <option value="Curitiba, PR">Curitiba, PR</option>
+                <option value="Porto Alegre, RS">Porto Alegre, RS</option>
+                <option value="Salvador, BA">Salvador, BA</option>
+                <option value="Recife, PE">Recife, PE</option>
+                <option value="Fortaleza, CE">Fortaleza, CE</option>
+                <option value="Brasília, DF">Brasília, DF</option>
+                <option value="Florianópolis, SC">Florianópolis, SC</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                QUANTIDADE
+              </label>
+              <select
+                value={quantidade}
+                onChange={(e) => setQuantidade(e.target.value)}
+                className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none focus:border-orange-500"
+              >
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs py-2.5 uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "PESQUISAR LEADS"}
+              </button>
+            </div>
           </form>
 
           {error && (
@@ -442,33 +460,23 @@ function Dashboard({ currentUser }) {
           )}
         </div>
 
-        <div className="bg-[#14161c] border border-zinc-800/80 rounded-xl overflow-hidden shadow-lg">
-          <div className="p-4 border-b border-zinc-800/80 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-200">Resultados da busca</h3>
-            <button
-              onClick={exportCSV}
-              disabled={leads.length === 0}
-              className="bg-[#1d1f27] border border-zinc-800 hover:bg-zinc-800 disabled:opacity-40 text-zinc-300 text-xs px-3 py-1.5 rounded-lg flex items-center gap-2 transition-colors font-medium"
-            >
-              <Download className="h-3.5 w-3.5" /> Exportar CSV
-            </button>
-          </div>
-
+        {/* TABELA DE RESULTADOS */}
+        <div className="bg-[#14161c] border border-zinc-800 overflow-hidden">
           {loading ? (
             <div className="py-20 text-center text-zinc-500">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-amber-400 mb-2" />
+              <Loader2 className="h-8 w-8 animate-spin mx-auto text-orange-500 mb-2" />
               Pesquisando base de empresas e sócios...
             </div>
           ) : filteredLeads.length === 0 && leads.length === 0 ? (
             <div className="py-16 text-center text-zinc-500 flex flex-col items-center">
               <Inbox className="h-10 w-10 mb-2 text-zinc-600" />
               <p className="text-sm font-medium text-zinc-400">Nenhum resultado encontrado</p>
-              <p className="text-xs text-zinc-600 mt-1">Preencha os dados acima e clique em Pesquisar.</p>
+              <p className="text-xs text-zinc-600 mt-1">Selecione o nicho e a cidade desejada e clique em Pesquisar Leads.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-[#0c0d10] text-zinc-400 text-[10px] uppercase font-semibold tracking-wider border-b border-zinc-800/80">
+                <thead className="bg-[#0d0e12] text-zinc-400 text-[10px] uppercase font-semibold tracking-wider border-b border-zinc-800">
                   <tr>
                     <th className="p-3 w-1/4">EMPRESA / SITE</th>
                     <th className="p-3 w-1/5">CNPJ / SÓCIOS</th>
@@ -478,14 +486,14 @@ function Dashboard({ currentUser }) {
                     <th className="p-3 text-right">AÇÕES</th>
                   </tr>
 
-                  <tr className="bg-[#121316] border-b border-zinc-800/80 font-normal">
+                  <tr className="bg-[#14161c] border-b border-zinc-800 font-normal">
                     <td className="p-2">
                       <input
                         type="text"
                         value={filterEmpresa}
                         onChange={(e) => setFilterEmpresa(e.target.value)}
                         placeholder="filtrar empresa"
-                        className="w-full bg-[#0c0d10] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 rounded focus:outline-none focus:border-zinc-600"
+                        className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 focus:outline-none"
                       />
                     </td>
                     <td className="p-2">
@@ -494,7 +502,7 @@ function Dashboard({ currentUser }) {
                         value={filterCnpj}
                         onChange={(e) => setFilterCnpj(e.target.value)}
                         placeholder="filtrar CNPJ"
-                        className="w-full bg-[#0c0d10] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 rounded focus:outline-none focus:border-zinc-600"
+                        className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 focus:outline-none"
                       />
                     </td>
                     <td className="p-2">
@@ -503,7 +511,7 @@ function Dashboard({ currentUser }) {
                         value={filterDecisor}
                         onChange={(e) => setFilterDecisor(e.target.value)}
                         placeholder="filtrar decisor"
-                        className="w-full bg-[#0c0d10] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 rounded focus:outline-none focus:border-zinc-600"
+                        className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-300 text-[11px] px-2 py-1 focus:outline-none"
                       />
                     </td>
                     <td className="p-2"></td>
@@ -511,7 +519,7 @@ function Dashboard({ currentUser }) {
                       <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="w-full bg-[#0c0d10] border border-zinc-800 text-zinc-300 text-[10px] font-bold uppercase px-2 py-1 rounded focus:outline-none"
+                        className="w-full bg-[#0d0e12] border border-zinc-800 text-zinc-300 text-[10px] font-bold uppercase px-2 py-1 focus:outline-none"
                       >
                         <option value="TODOS STATUS">TODOS STATUS</option>
                         <option value="NOVO">NOVO</option>
@@ -522,20 +530,17 @@ function Dashboard({ currentUser }) {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-zinc-800/60 bg-[#121316]">
+                <tbody className="divide-y divide-zinc-800 bg-[#14161c]">
                   {filteredLeads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-zinc-800/20 transition-colors">
+                    <tr key={lead.id} className="hover:bg-zinc-800/30 transition-colors">
                       <td className="p-4">
                         <div className="font-bold text-sm text-zinc-100">{lead.empresa}</div>
-                        <div className="text-xs text-zinc-500 font-medium">{lead.site}</div>
-                        <div className="text-[10px] text-zinc-500 font-semibold tracking-wide uppercase mt-1">
-                          {lead.ramoCidade}
-                        </div>
+                        <div className="text-xs text-zinc-500">{lead.site}</div>
                       </td>
 
                       <td className="p-4">
                         <div className="font-bold text-xs text-zinc-200">{lead.cnpj}</div>
-                        <div className="text-xs text-zinc-500 mt-0.5">{lead.socios}</div>
+                        <div className="text-xs text-zinc-500">{lead.socios}</div>
                       </td>
 
                       <td className="p-4">
@@ -546,20 +551,20 @@ function Dashboard({ currentUser }) {
                           href={lead.linkedinUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-block text-[10px] font-bold text-amber-500 hover:underline uppercase tracking-wider mt-1"
+                          className="inline-block text-[10px] font-bold text-orange-500 hover:underline uppercase tracking-wider mt-1"
                         >
                           LINKEDIN
                         </a>
                       </td>
 
                       <td className="p-4">
-                        <div className="font-bold text-sm text-amber-500 font-mono">
+                        <div className="font-bold text-sm text-orange-500 font-mono">
                           {lead.telefone}
                         </div>
                       </td>
 
                       <td className="p-4">
-                        <span className="px-3 py-1 bg-[#1a1c23] border border-zinc-800 text-zinc-400 rounded text-[10px] font-bold uppercase tracking-wider">
+                        <span className="px-2.5 py-1 bg-[#0d0e12] border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase tracking-wider">
                           {lead.status}
                         </span>
                       </td>
@@ -567,7 +572,7 @@ function Dashboard({ currentUser }) {
                       <td className="p-4 text-right">
                         <button
                           onClick={() => handleWhatsApp(lead.telefone, lead.empresa)}
-                          className="px-4 py-2 bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 hover:bg-emerald-600 hover:text-white rounded transition-colors text-[11px] font-bold uppercase tracking-wider"
+                          className="px-3 py-1.5 bg-emerald-950/40 text-emerald-400 border border-emerald-800/60 hover:bg-emerald-600 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-wider"
                         >
                           WHATSAPP
                         </button>
@@ -612,8 +617,8 @@ export default function App() {
 
   if (!checkedSession) {
     return (
-      <div className="min-h-screen bg-[#0e0f12] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+      <div className="min-h-screen bg-[#0d0e12] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
       </div>
     );
   }

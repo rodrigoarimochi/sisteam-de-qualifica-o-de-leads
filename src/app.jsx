@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão Completa para VS Code
+ * LEADFINDER — Versão Completa sem Chaves Expostas
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -18,11 +18,9 @@ import {
   Inbox
 } from "lucide-react";
 
-/* ---- CONEXÃO COM O SUPABASE ---- */
-const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
-
-// >>> SUBSTiTUAM A CHAVE ABAIXO PELA SUA ANON KEY DO SUPABASE <<<
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+/* ---- CONEXÃO COM O SUPABASE (VARIÁVEIS DE AMBIENTE PURAS) ---- */
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -73,7 +71,10 @@ function AuthScreen() {
         const { data, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(),
           password,
-          options: { data: { full_name: name.trim() } },
+          options: {
+            data: { full_name: name.trim() },
+            emailRedirectTo: "https://buscadordelead.vercel.app"
+          },
         });
         if (signUpError) throw signUpError;
         if (data.user && !data.session) {
@@ -587,24 +588,30 @@ function Dashboard({ currentUser }) {
 }
 
 /* ------------------------------------------------------------------ *
- * APP RAIZ
+ * APP RAIZ (TRATAMENTO DE LOGOUT AO CONFIRMAR E-MAIL)
  * ------------------------------------------------------------------ */
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [checkedSession, setCheckedSession] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(sessionToUser(session));
-      setCheckedSession(true);
-
-      if (window.location.hash.includes("access_token")) {
+    if (window.location.hash.includes("access_token")) {
+      supabase.auth.signOut().then(() => {
         window.history.replaceState(null, "", window.location.pathname);
-      }
-    });
+        setCurrentUser(null);
+        setCheckedSession(true);
+      });
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setCurrentUser(sessionToUser(session));
+        setCheckedSession(true);
+      });
+    }
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(sessionToUser(session));
+      if (!window.location.hash.includes("access_token")) {
+        setCurrentUser(sessionToUser(session));
+      }
     });
 
     return () => {

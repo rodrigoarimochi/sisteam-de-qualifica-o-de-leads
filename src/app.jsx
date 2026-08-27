@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Layout Atualizado (Header Superior + Abas Nicho / CNPJ)
+ * LEADFINDER — Layout Atualizado
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -16,11 +16,9 @@ import {
   Eye,
   EyeOff,
   Inbox,
-  Building2,
-  MapPin,
   Briefcase,
-  Target,
-  Hash
+  MapPin,
+  Target
 } from "lucide-react";
 
 /* ---- CONEXÃO COM O SUPABASE ---- */
@@ -183,7 +181,7 @@ function AuthScreen() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-          )}
+          </div>
 
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded p-2.5">
@@ -213,10 +211,10 @@ function AuthScreen() {
 }
 
 /* ------------------------------------------------------------------ *
- * PAINEL PRINCIPAL (CÓPIA FIEL DO SEU LAYOUT GIT)
+ * PAINEL PRINCIPAL
  * ------------------------------------------------------------------ */
 function Dashboard({ currentUser }) {
-  const [searchTab, setSearchTab] = useState("nicho"); // "nicho" ou "cnpj"
+  const [searchTab, setSearchTab] = useState("nicho");
   const [nichoInput, setNichoInput] = useState("");
   const [cidadeInput, setCidadeInput] = useState("");
   const [cnpjInput, setCnpjInput] = useState("");
@@ -225,7 +223,6 @@ function Dashboard({ currentUser }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Filtros internos da tabela
   const [filterEmpresa, setFilterEmpresa] = useState("");
   const [filterCnpj, setFilterCnpj] = useState("");
   const [filterDecisor, setFilterDecisor] = useState("");
@@ -248,15 +245,9 @@ function Dashboard({ currentUser }) {
     setError("");
 
     try {
-      let queryStr = "";
-      if (searchTab === "nicho") {
-        queryStr = encodeURIComponent(`${nichoInput} ${cidadeInput}`.trim());
-      } else {
-        queryStr = encodeURIComponent(cnpjInput.trim());
-      }
-
+      let queryStr = searchTab === "nicho" ? `${nichoInput} ${cidadeInput}`.trim() : cnpjInput.trim();
       const osmRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${queryStr}&format=json&addressdetails=1&limit=20&countrycodes=br`
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryStr)}&format=json&addressdetails=1&limit=20&countrycodes=br`
       );
 
       if (!osmRes.ok) throw new Error("Erro ao consultar serviço de busca.");
@@ -271,7 +262,6 @@ function Dashboard({ currentUser }) {
       const mappedLeads = places.map((place, idx) => {
         const title = place.name || place.display_name.split(",")[0] || "Empresa B2B";
         const cleanName = title.toLowerCase().replace(/[^a-z0-9]/g, "");
-
         const ddd = Math.floor(11 + Math.random() * 80);
         const num1 = Math.floor(90000 + Math.random() * 9000);
         const num2 = Math.floor(1000 + Math.random() * 9000);
@@ -343,7 +333,6 @@ function Dashboard({ currentUser }) {
 
   return (
     <div className="min-h-screen bg-[#0e0f12] text-zinc-100 font-sans flex flex-col">
-      {/* topo: HEADER HORIZONTAL */}
       <header className="border-b border-zinc-800/80 bg-[#121316] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center">
@@ -369,11 +358,8 @@ function Dashboard({ currentUser }) {
         </div>
       </header>
 
-      {/* CONTEÚDO */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        {/* BLOCO DE BUSCA */}
         <div className="bg-[#14161c] border border-zinc-800/80 rounded-xl p-5 shadow-lg">
-          {/* SELETOR DE ABAS */}
           <div className="flex items-center gap-2 mb-4">
             <button
               onClick={() => setSearchTab("nicho")}
@@ -395,12 +381,11 @@ function Dashboard({ currentUser }) {
                   : "bg-[#1d1f27] text-zinc-400 hover:text-zinc-200 border border-zinc-800"
               }`}
             >
-              <Hash className="h-3.5 w-3.5" />
+              <span className="text-xs font-bold">#</span>
               CNPJ
             </button>
           </div>
 
-          {/* INPUTS DE PESQUISA */}
           <form onSubmit={searchLeads} className="flex flex-col md:flex-row gap-3">
             {searchTab === "nicho" ? (
               <>
@@ -428,7 +413,7 @@ function Dashboard({ currentUser }) {
               </>
             ) : (
               <div className="relative flex-1">
-                <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs font-bold">#</span>
                 <input
                   type="text"
                   value={cnpjInput}
@@ -457,7 +442,6 @@ function Dashboard({ currentUser }) {
           )}
         </div>
 
-        {/* PAINEL DE RESULTADOS */}
         <div className="bg-[#14161c] border border-zinc-800/80 rounded-xl overflow-hidden shadow-lg">
           <div className="p-4 border-b border-zinc-800/80 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-zinc-200">Resultados da busca</h3>

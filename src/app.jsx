@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Layout Idêntico às Imagens (Com Dropdowns e Métricas)
+ * LEADFINDER — Versão Completa para VS Code
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -20,8 +20,9 @@ import {
 
 /* ---- CONEXÃO COM O SUPABASE ---- */
 const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6IZEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+
+// >>> SUBSTiTUAM A CHAVE ABAIXO PELA SUA ANON KEY DO SUPABASE <<<
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -313,7 +314,6 @@ function Dashboard({ currentUser }) {
 
   return (
     <div className="min-h-screen bg-[#0d0e12] text-zinc-100 font-sans flex flex-col">
-      {/* HEADER */}
       <header className="border-b border-zinc-800 bg-[#14161c] px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-extrabold tracking-tight text-white">Prospecção Ativa</h1>
 
@@ -345,7 +345,6 @@ function Dashboard({ currentUser }) {
       </header>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        {/* CARDS DE MÉTRICAS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[#14161c] border border-zinc-800 p-5">
             <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
@@ -376,7 +375,6 @@ function Dashboard({ currentUser }) {
           </div>
         </div>
 
-        {/* BARRA DE FILTROS E BUSCA DROPDOWN */}
         <div className="bg-[#14161c] border border-zinc-800 p-5">
           <form onSubmit={searchLeads} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             <div className="md:col-span-4">
@@ -460,7 +458,6 @@ function Dashboard({ currentUser }) {
           )}
         </div>
 
-        {/* TABELA DE RESULTADOS */}
         <div className="bg-[#14161c] border border-zinc-800 overflow-hidden">
           {loading ? (
             <div className="py-20 text-center text-zinc-500">

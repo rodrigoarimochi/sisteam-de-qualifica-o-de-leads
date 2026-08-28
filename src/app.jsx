@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão Completa sem Chaves Expostas
+ * LEADFINDER — Versão Funcional Completa
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -18,9 +18,9 @@ import {
   Inbox
 } from "lucide-react";
 
-/* ---- CONEXÃO COM O SUPABASE (VARIÁVEIS DE AMBIENTE PURAS) ---- */
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+/* ---- CONEXÃO COM O SUPABASE ---- */
+const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -588,7 +588,7 @@ function Dashboard({ currentUser }) {
 }
 
 /* ------------------------------------------------------------------ *
- * APP RAIZ (TRATAMENTO DE LOGOUT AO CONFIRMAR E-MAIL)
+ * APP RAIZ
  * ------------------------------------------------------------------ */
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);

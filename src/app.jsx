@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER PRO — Enterprise Suite (Governo, Bureaus & Enriquecimento)
+ * LEADFINDER PRO — Enterprise Suite (Pronto para Uso)
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -24,7 +24,7 @@ import {
 
 /* ---- CONEXÃO COM O SUPABASE ---- */
 const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -217,8 +217,6 @@ function Dashboard({ currentUser }) {
   const [cidade, setCidade] = useState("Campinas");
   const [quantidade, setQuantidade] = useState("50");
 
-  // Credenciais de Integração Completas (Governo + Bureaus + Enriquecimento)
-  const [apiKeyGov, setApiKeyGov] = useState("");
   const [apiKeyCnpja, setApiKeyCnpja] = useState("");
   const [apiKeyCasaDados, setApiKeyCasaDados] = useState("");
   const [apiKeySpeedio, setApiKeySpeedio] = useState("");
@@ -246,19 +244,15 @@ function Dashboard({ currentUser }) {
       const limitCount = parseInt(quantidade) || 50;
       const fetchedLeads = [];
 
-      // Etapa 1: Consulta oficial na Receita Federal / CNPJá / BrasilAPI
       setPipelineStep("1/4 - Consultando base oficial e Bureaus (CNPJa / BrasilAPI)...");
       await new Promise(r => setTimeout(r, 600));
 
-      // Etapa 2: Varredura setorial (Casa dos Dados / Speedio por CNAE e Município)
       setPipelineStep("2/4 - Processando varredura setorial (Casa dos Dados / Speedio)...");
       await new Promise(r => setTimeout(r, 600));
 
-      // Etapa 3: Enriquecimento de Contatos e E-mails (Apollo.io / Hunter.io)
       setPipelineStep("3/4 - Enriquecendo e-mails corporativos e decisores (Apollo / Hunter)...");
       await new Promise(r => setTimeout(r, 600));
 
-      // Etapa 4: Validação final e estruturação B2B
       setPipelineStep("4/4 - Consolidando dados enterprise no Supabase...");
       await new Promise(r => setTimeout(r, 600));
 
@@ -428,7 +422,6 @@ function Dashboard({ currentUser }) {
       </header>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        {/* PAINEL DE CONFIGURAÇÃO DE CHAVES DE API COMPLETO */}
         {showConfig && (
           <div className="bg-[#16181e] border border-orange-500/40 p-5 rounded-lg space-y-4">
             <h3 className="text-sm font-bold text-orange-400 uppercase tracking-wider flex items-center gap-2">
@@ -491,17 +484,6 @@ function Dashboard({ currentUser }) {
                   className="w-full bg-[#0d0e12] border border-zinc-800 rounded p-2 text-xs text-zinc-100 focus:border-orange-500"
                 />
               </div>
-
-              <div>
-                <label className="block text-[10px] text-zinc-400 uppercase font-bold mb-1">Receita Federal / Gov API</label>
-                <input
-                  type="password"
-                  value={apiKeyGov}
-                  onChange={(e) => setApiKeyGov(e.target.value)}
-                  placeholder="Token Governamental"
-                  className="w-full bg-[#0d0e12] border border-zinc-800 rounded p-2 text-xs text-zinc-100 focus:border-orange-500"
-                />
-              </div>
             </div>
           </div>
         )}
@@ -538,7 +520,6 @@ function Dashboard({ currentUser }) {
           </div>
         </div>
 
-        {/* PAINEL DE FILTROS E BUSCA */}
         <div className="bg-[#14161c] border border-zinc-800 p-5">
           <form onSubmit={runEnterprisePipeline} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             <div className="md:col-span-3">
@@ -630,7 +611,6 @@ function Dashboard({ currentUser }) {
           )}
         </div>
 
-        {/* TABELA DE LEADS */}
         <div className="bg-[#14161c] border border-zinc-800 overflow-hidden">
           {loading && leads.length === 0 ? (
             <div className="py-20 text-center text-zinc-500">

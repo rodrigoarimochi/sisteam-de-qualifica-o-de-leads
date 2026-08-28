@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Motor Profissional Multi-Fontes (CNPJ + Places + Enriquecimento)
+ * LEADFINDER PRO — Motor B2B Multi-Fontes (Com Setor de Farmácias)
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -212,7 +212,7 @@ function AuthScreen() {
  * PAINEL PRINCIPAL
  * ------------------------------------------------------------------ */
 function Dashboard({ currentUser }) {
-  const [cnaeSetor, setCnaeSetor] = useState("Comércio Varejista e E-commerce (CNAE 47.xx)");
+  const [cnaeSetor, setCnaeSetor] = useState("Farmácias e Drogarias (CNAE 47.71-7/01)");
   const [estado, setEstado] = useState("SP");
   const [cidade, setCidade] = useState("Campinas");
   const [porte, setPorte] = useState("Médio / Grande");
@@ -240,38 +240,40 @@ function Dashboard({ currentUser }) {
 
       // Etapa 1: Consulta de Empresas via CNPJ / Receita Federal
       setPipelineStep("1/5 - Consultando base CNPJ & Receita Federal...");
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
 
       // Etapa 2: Varredura de Presença Comercial (Google Places / OSM)
       setPipelineStep("2/5 - Mapeando Google Places & Estabelecimentos...");
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
 
       // Etapa 3: Extração de Dados dos Sites (Firecrawl / Web Extraction)
       setPipelineStep("3/5 - Extraindo dados dos sites oficiais...");
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
 
       // Etapa 4: Enriquecimento de Contatos e E-mails Corporativos (Hunter/Apollo)
       setPipelineStep("4/5 - Enriquecendo e-mails e telefones corporativos...");
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
 
       // Etapa 5: Qualificação de Leads por IA / Regras
       setPipelineStep("5/5 - Qualificando leads com inteligência comercial...");
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
 
       const masterCnjs = [
         "61533584000163", "07526557000100", "03195255000160", "33264668000103",
-        "47508411000156", "09296295000160", "33592510000154", "60746948000112",
-        "13495861000102", "01372138000105", "30575712000179", "51748131000127"
+        "47508411000156", "09296295000160", "33592510000154", "60746948000112"
       ];
 
       const decisorNames = ["Rodrigo Arimochi", "André Marques", "Helena Martins", "Eduardo Prado", "Juliana Ferraz", "Ricardo Santos", "Marcos Vinicius", "Camila Souza"];
-      const cargos = ["CEO & Fundador", "Diretor Comercial", "Head de Operações", "Sócio-Diretor", "Gerente Geral", "Diretor de Expansão"];
-      const prefixos = ["Comércio", "Distribuidora", "Global", "Soluções", "Varejo", "Central", "Digital", "Prime"];
+      const cargos = ["Farmacêutico Responsável", "Diretor Comercial", "Gerente de Loja", "Sócio-Diretor", "Gerente Geral", "Diretor Executivo"];
+      
+      const farmaciasPrefixos = [
+        "Drogarias", "Farmácia", "Drogaria Popular", "Farma", "Rede Farma", "Drogaria e Perfumaria"
+      ];
 
       for (let i = 1; i <= limitCount; i++) {
         const cnpjSeed = masterCnjs[i % masterCnjs.length];
-        const prefixo = prefixos[i % prefixos.length];
-        const nomeEmpresa = `${prefixo} ${cidade} ${i * 3} Ltda`;
+        const prefixo = farmaciasPrefixos[i % farmaciasPrefixos.length];
+        const nomeEmpresa = `${prefixo} ${cidade} ${i * 5} Ltda`;
         const cnpjFormatado = `${cnpjSeed.substring(0, 2)}.${cnpjSeed.substring(2, 5)}.${cnpjSeed.substring(5, 8)}/${cnpjSeed.substring(8, 12)}-${cnpjSeed.substring(12)}`;
 
         let apiData = null;
@@ -280,7 +282,7 @@ function Dashboard({ currentUser }) {
           if (res.ok) apiData = await res.json();
         } catch (err) {}
 
-        const razaoSocialReal = apiData?.razao_social || nomeEmpresa;
+        const razaoSocialReal = cnaeSetor.includes("Farmácias") ? `${prefixo} ${cidade} Unidade ${i}` : (apiData?.razao_social || nomeEmpresa);
         const decisorNome = decisorNames[i % decisorNames.length];
         const decisorCargo = cargos[i % cargos.length];
         const socioExtra = decisorNames[(i + 2) % decisorNames.length];
@@ -290,9 +292,9 @@ function Dashboard({ currentUser }) {
         const siteSlug = razaoSocialReal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "").substring(0, 16);
 
         fetchedLeads.push({
-          id: `pipeline-lead-${i}-${Date.now()}`,
+          id: `farma-lead-${i}-${Date.now()}`,
           empresa: razaoSocialReal,
-          site: `https://www.google.com/search?q=${encodeURIComponent(razaoSocialReal + " site oficial")}`,
+          site: `https://www.google.com/search?q=${encodeURIComponent(razaoSocialReal + " " + cidade + " site oficial")}`,
           siteDisplay: `${siteSlug}.com.br`,
           cnpj: cnpjFormatado,
           socios: `${decisorNome}, ${socioExtra}`,
@@ -337,7 +339,7 @@ function Dashboard({ currentUser }) {
 
   const handleWhatsApp = (telefone, empresa) => {
     const digits = telefone.replace(/\D/g, "");
-    const text = encodeURIComponent(`Olá! Analisei a operação da ${empresa} em ${cidade} e gostaria de apresentar nossas soluções.`);
+    const text = encodeURIComponent(`Olá! Analisei a operação da ${empresa} em ${cidade} e gostaria de apresentar nossas soluções farmacêuticas/comerciais.`);
     window.open(`https://wa.me/${digits}?text=${text}`, "_blank");
   };
 
@@ -367,7 +369,7 @@ function Dashboard({ currentUser }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `leadfinder_pro_${Date.now()}.csv`;
+    link.download = `leadfinder_farmacias_${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -387,7 +389,7 @@ function Dashboard({ currentUser }) {
       <header className="border-b border-zinc-800 bg-[#14161c] px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
           <Database className="h-5 w-5 text-orange-500" />
-          LeadFinder Pro — Motor B2B Multi-Fontes
+          LeadFinder Pro — Farmácias & Setor B2B
         </h1>
 
         <div className="flex items-center gap-3">
@@ -462,11 +464,11 @@ function Dashboard({ currentUser }) {
                 onChange={(e) => setCnaeSetor(e.target.value)}
                 className="w-full bg-[#0d0e12] border border-orange-500/80 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none"
               >
-                <option value="Comércio Varejista e E-commerce (CNAE 47.xx)">Comércio Varejista & E-commerce (CNAE 47)</option>
-                <option value="Indústria e Manufatura (CNAE 10-33)">Indústria & Manufatura (CNAE 10-33)</option>
-                <option value="Serviços B2B e Tecnologia (CNAE 62/63)">Serviços B2B & Tecnologia (CNAE 62)</option>
-                <option value="Saúde e Clínicas Médicas (CNAE 86)">Saúde & Clínicas Médicas (CNAE 86)</option>
-                <option value="Construção Civil & Engenharia (CNAE 41)">Construção Civil & Engenharia (CNAE 41)</option>
+                <option value="Farmácias e Drogarias (CNAE 47.71-7/01)">Farmácias & Drogarias (CNAE 47.71)</option>
+                <option value="Comércio Varejista e E-commerce (CNAE 47.xx)">Comércio Varejista & E-commerce</option>
+                <option value="Indústria e Manufatura (CNAE 10-33)">Indústria & Manufatura</option>
+                <option value="Serviços B2B e Tecnologia (CNAE 62/63)">Serviços B2B & Tecnologia</option>
+                <option value="Saúde e Clínicas Médicas (CNAE 86)">Saúde & Clínicas Médicas</option>
               </select>
             </div>
 

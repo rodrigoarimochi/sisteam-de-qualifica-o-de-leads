@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão Completa e Massiva com Links Clicáveis
+ * LEADFINDER — Versão Completa com Links de Sites e LinkedIn em Laranja
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -231,8 +231,6 @@ function Dashboard({ currentUser }) {
       const limitCount = parseInt(quantidade) || 50;
       let generatedLeads = [];
 
-      const nTitle = nicho || "Empresas B2B";
-
       for (let i = 1; i <= limitCount; i++) {
         const randomNum = Math.floor(100 + Math.random() * 900);
         const prefixos = ["Comércio", "Distribuidora", "Global", "Soluções", "Varejo", "Central", "Digital", "Prime"];
@@ -263,6 +261,7 @@ function Dashboard({ currentUser }) {
           id: `lead-mass-${i}-${Date.now()}`,
           empresa: empresaNome,
           site: siteDomain,
+          siteSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(empresaNome + " site oficial")}`,
           cnpj: `${Math.floor(10 + Math.random() * 80)}.${Math.floor(100 + Math.random() * 800)}.${Math.floor(100 + Math.random() * 800)}/0001-${Math.floor(10 + Math.random() * 80)}`,
           socios: `${decisorNome}, ${socioExtra}`,
           decisorName: decisorNome,
@@ -576,10 +575,10 @@ function Dashboard({ currentUser }) {
                       <td className="p-4">
                         <div className="font-bold text-sm text-zinc-100">{lead.empresa}</div>
                         <a
-                          href={`https://www.${lead.site}`}
+                          href={lead.siteSearchUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-block text-xs text-zinc-400 hover:text-orange-500 hover:underline mt-0.5"
+                          className="inline-block text-[10px] font-bold text-orange-500 hover:underline uppercase tracking-wider mt-1"
                         >
                           {lead.site}
                         </a>

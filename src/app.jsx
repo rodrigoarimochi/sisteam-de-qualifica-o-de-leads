@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão Funcional Completa
+ * LEADFINDER — Versão Funcional Completa com Exportação Corrigida
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -282,19 +282,27 @@ function Dashboard({ currentUser }) {
   };
 
   const exportCSV = () => {
-    if (leads.length === 0) return;
-    const headers = ["Empresa", "Site", "CNPJ", "Sócios", "Decisor", "Contato", "Status"];
+    if (filteredLeads.length === 0) return;
+    
+    const headers = ["Empresa", "Site", "CNPJ", "Sócios", "Decisor", "Cargo", "WhatsApp", "Status"];
+    
     const rows = filteredLeads.map((l) => [
       l.empresa,
       l.site,
       l.cnpj,
       l.socios,
-      `${l.decisorName} ${l.decisorCargo}`,
+      l.decisorName,
+      l.decisorCargo,
       l.telefone,
       l.status
     ]);
-    const csv = [headers, ...rows].map((r) => r.map(csvEscape).join(",")).join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+
+    const csvContent = [
+      headers.map(csvEscape).join(";"),
+      ...rows.map((r) => r.map(csvEscape).join(";"))
+    ].join("\r\n");
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

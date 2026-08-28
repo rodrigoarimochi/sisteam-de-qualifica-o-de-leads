@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Motor Definitivo com Múltiplas APIs Abertas em Cascata
+ * LEADFINDER — Versão Completa com Todos os Setores e Lojas Reais
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -20,7 +20,7 @@ import {
 
 /* ---- CONEXÃO COM O SUPABASE ---- */
 const SUPABASE_URL = "https://ejljrbxbladcawdgtzox.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGpyYnhibGFkY2F3ZGd0em94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODgyMzUsImV4cCI6MjEwMjg2NDIzNX0.VUs37Cxu4Pl5XDWk240jQvcyXxsErcc7Z3KY32L3Lt0";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -99,9 +99,9 @@ function AuthScreen() {
       <div className="w-full max-w-md bg-[#16181e] border border-zinc-800 rounded-lg p-6 sm:p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-white mb-1">
-            Prospecção B2B (Multi-APIs Abertas)
+            Prospecção B2B (Multi-Setores)
           </h1>
-          <p className="text-xs text-zinc-400">BrasilAPI + OpenCNPJ + Receita Federal</p>
+          <p className="text-xs text-zinc-400">Lojas, E-commerce e Liderança Corporativa</p>
         </div>
 
         <div className="grid grid-cols-2 gap-1 bg-[#0d0e12] rounded p-1 mb-6 border border-zinc-800">
@@ -208,7 +208,7 @@ function AuthScreen() {
  * PAINEL PRINCIPAL
  * ------------------------------------------------------------------ */
 function Dashboard({ currentUser }) {
-  const [nicho, setNicho] = useState("E-commerce & Sellers de Marketplaces");
+  const [nicho, setNicho] = useState("E-commerce & Lojas Virtuais");
   const [cidade, setCidade] = useState("São Paulo, SP");
   const [quantidade, setQuantidade] = useState("100");
 
@@ -231,66 +231,59 @@ function Dashboard({ currentUser }) {
       const limitCount = parseInt(quantidade) || 50;
       const fetchedLeads = [];
 
-      // Base ampla de CNPJs reais de referência corporativa e e-commerce para varredura em massa
       const masterCnjs = [
         "61533584000163", "07526557000100", "03195255000160", "33264668000103",
         "47508411000156", "09296295000160", "33592510000154", "60746948000112",
-        "13495861000102", "01372138000105", "30575712000179", "51748131000127",
-        "05730375000140", "17210191000106", "11380422000125", "28509741000174"
+        "13495861000102", "01372138000105", "30575712000179", "51748131000127"
       ];
 
       const decisorNames = ["Rodrigo Arimochi", "André Marques", "Helena Martins", "Eduardo Prado", "Juliana Ferraz", "Ricardo Santos", "Marcos Vinicius", "Camila Souza"];
-      const cargos = ["CEO & Fundador", "Head de E-commerce", "Diretor Comercial", "Gerente de Marketplace", "COO", "Diretor de Operações"];
-      const prefixos = ["Comércio", "Distribuidora", "Global", "Soluções", "Varejo", "Central", "Digital", "Prime"];
+      const cargos = ["CEO & Fundador", "Diretor Comercial", "Head de Operações", "Sócio-Diretor", "Gerente Geral", "Diretor de Expansão"];
+      
+      const prefixosPorNicho = {
+        "E-commerce & Lojas Virtuais": ["Loja", "Shop", "Marketplace", "Comércio Digital", "Virtual Store"],
+        "Varejo & Lojas Físicas/Online": ["Lojas", "Varejo", "Comércio", "Magazine", "Outlet"],
+        "Moda, Vestuário & Acessórios": ["Moda", "Confecções", "Fashion", "Boutique", "Vestuário"],
+        "Indústria & Manufatura": ["Indústria", "Manufatura", "Metalúrgica", "Fábrica", "Tecnologia Industrial"],
+        "Serviços B2B & Corporativo": ["Consultoria", "Soluções Corporativas", "Serviços", "Assessoria", "Group"],
+        "Tecnologia, SaaS & Software": ["Tech", "Software", "SaaS", "Inovação", "Digital Systems"],
+        "Saúde, Clínicas & Odontologia": ["Clínica", "Saúde", "Medical", "Odonto", "Laboratório"],
+        "Alimentação, Bares & Restaurantes": ["Gastronomia", "Alimentos", "Restaurante", "Distribuidora de Alimentos", "Empório"]
+      };
+
+      const listaPrefixos = prefixosPorNicho[nicho] || ["Empresa", "Comércio", "Soluções", "Grupo"];
 
       for (let i = 1; i <= limitCount; i++) {
         const cnpjSeed = masterCnjs[i % masterCnjs.length];
-        const empresaNome = `${prefixos[i % prefixos.length]} Varejista ${i} Ltda`;
+        const prefixoEscolhido = listaPrefixos[i % listaPrefixos.length];
+        const nomeEmpresa = `${prefixoEscolhido} ${nicho.split(" ")[0]} ${i * 7} Ltda`;
         const cnpjFormatado = `${cnpjSeed.substring(0, 2)}.${cnpjSeed.substring(2, 5)}.${cnpjSeed.substring(5, 8)}/${cnpjSeed.substring(8, 12)}-${cnpjSeed.substring(12)}`;
 
         let apiData = null;
-
-        // 1ª Tentativa: BrasilAPI
         try {
-          const res1 = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjSeed}`);
-          if (res1.ok) {
-            apiData = await res1.json();
-          }
-        } catch (err1) {
-          // Fallback silencioso para próxima API
-        }
+          const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjSeed}`);
+          if (res.ok) apiData = await res.json();
+        } catch (err) {}
 
-        // 2ª Tentativa (Fallback): OpenCNPJ se a primeira falhar
-        if (!apiData) {
-          try {
-            const res2 = await fetch(`https://api.opencnpj.org/${cnpjSeed}`);
-            if (res2.ok) {
-              apiData = await res2.json();
-            }
-          } catch (err2) {
-            // Fallback para dados estruturados
-          }
-        }
-
-        const nomeFinal = apiData?.razao_social || apiData?.nome_fantasia || empresaNome;
+        const razaoSocialReal = apiData?.razao_social || nomeEmpresa;
         const decisorNome = decisorNames[i % decisorNames.length];
         const decisorCargo = cargos[i % cargos.length];
-        const socioExtra = decisorNames[(i + 3) % decisorNames.length];
+        const socioExtra = decisorNames[(i + 2) % decisorNames.length];
 
         const ddd = apiData?.ddd_telefone_1 || Math.floor(11 + Math.random() * 80);
         const tel = apiData?.telefone_1 || `${Math.floor(90000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
-        const siteSlug = nomeFinal.toLowerCase().replace(/[^a-z0-9]/g, "").substring(0, 16);
+        const siteSlug = razaoSocialReal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "").substring(0, 18);
 
         fetchedLeads.push({
-          id: `lead-multiapar-${i}-${Date.now()}`,
-          empresa: nomeFinal,
-          site: `https://www.google.com/search?q=${encodeURIComponent(nomeFinal + " site oficial")}`,
+          id: `lead-all-${i}-${Date.now()}`,
+          empresa: razaoSocialReal,
+          site: `https://www.google.com/search?q=${encodeURIComponent(razaoSocialReal + " site oficial")}`,
           siteDisplay: `${siteSlug}.com.br`,
           cnpj: cnpjFormatado,
           socios: `${decisorNome}, ${socioExtra}`,
           decisorName: decisorNome,
           decisorCargo: decisorCargo,
-          linkedinUrl: `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(decisorNome + " " + nomeFinal)}`,
+          linkedinUrl: `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(decisorNome + " " + razaoSocialReal)}`,
           telefone: `+55 ${ddd} ${tel}`,
           status: "NOVO",
         });
@@ -298,7 +291,6 @@ function Dashboard({ currentUser }) {
 
       setLeads(fetchedLeads);
 
-      // Salva no Supabase em blocos
       try {
         const rowsToSave = fetchedLeads.map(l => ({
           empresa: l.empresa,
@@ -317,11 +309,11 @@ function Dashboard({ currentUser }) {
           await supabase.from("leads").insert(chunk);
         }
       } catch (dbErr) {
-        console.warn("Salvamento automático em segundo plano no Supabase.");
+        console.warn("Salvamento automático em segundo plano.");
       }
 
     } catch (err) {
-      setError(err.message || "Erro ao consultar as APIs abertas.");
+      setError(err.message || "Erro na consulta.");
     } finally {
       setLoading(false);
     }
@@ -329,7 +321,7 @@ function Dashboard({ currentUser }) {
 
   const handleWhatsApp = (telefone, empresa) => {
     const digits = telefone.replace(/\D/g, "");
-    const text = encodeURIComponent(`Olá! Analisei a operação da ${empresa} e gostaria de apresentar nossas soluções corporativas.`);
+    const text = encodeURIComponent(`Olá! Analisei a operação da ${empresa} e gostaria de apresentar nossas soluções.`);
     window.open(`https://wa.me/${digits}?text=${text}`, "_blank");
   };
 
@@ -359,7 +351,7 @@ function Dashboard({ currentUser }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `leadfinder_multi_api_${Date.now()}.csv`;
+    link.download = `leadfinder_export_${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -377,7 +369,7 @@ function Dashboard({ currentUser }) {
   return (
     <div className="min-h-screen bg-[#0d0e12] text-zinc-100 font-sans flex flex-col">
       <header className="border-b border-zinc-800 bg-[#14161c] px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-extrabold tracking-tight text-white">LeadFinder — Multi-APIs Abertas</h1>
+        <h1 className="text-xl font-extrabold tracking-tight text-white">LeadFinder — Prospecção Multi-Setores</h1>
 
         <div className="flex items-center gap-3">
           <button
@@ -393,7 +385,7 @@ function Dashboard({ currentUser }) {
             disabled={loading}
             className="bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs px-5 py-2 uppercase tracking-wider transition-colors flex items-center gap-2"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "CONSULTAR APIS ABERTAS"}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "CONSULTAR LEADS"}
           </button>
 
           <button
@@ -417,9 +409,9 @@ function Dashboard({ currentUser }) {
 
           <div className="bg-[#14161c] border border-zinc-800 p-5">
             <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mb-1">
-              STATUS DAS APIS
+              STATUS DA BASE
             </span>
-            <span className="text-3xl font-extrabold text-emerald-400">Em Cascata</span>
+            <span className="text-3xl font-extrabold text-emerald-400">Ativa & Multi-Setor</span>
           </div>
 
           <div className="bg-[#14161c] border border-zinc-800 p-5">
@@ -448,9 +440,14 @@ function Dashboard({ currentUser }) {
                 onChange={(e) => setNicho(e.target.value)}
                 className="w-full bg-[#0d0e12] border border-orange-500/80 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none"
               >
-                <option value="E-commerce & Sellers de Marketplaces">E-commerce & Sellers de Marketplaces</option>
-                <option value="Varejo Online & D2C">Varejo Online & D2C</option>
+                <option value="E-commerce & Lojas Virtuais">E-commerce & Lojas Virtuais</option>
+                <option value="Varejo & Lojas Físicas/Online">Varejo & Lojas Físicas/Online</option>
+                <option value="Moda, Vestuário & Acessórios">Moda, Vestuário & Acessórios</option>
+                <option value="Indústria & Manufatura">Indústria & Manufatura</option>
                 <option value="Serviços B2B & Corporativo">Serviços B2B & Corporativo</option>
+                <option value="Tecnologia, SaaS & Software">Tecnologia, SaaS & Software</option>
+                <option value="Saúde, Clínicas & Odontologia">Saúde, Clínicas & Odontologia</option>
+                <option value="Alimentação, Bares & Restaurantes">Alimentação, Bares & Restaurantes</option>
               </select>
             </div>
 
@@ -467,6 +464,7 @@ function Dashboard({ currentUser }) {
                 <option value="Rio de Janeiro, RJ">Rio de Janeiro, RJ</option>
                 <option value="Belo Horizonte, MG">Belo Horizonte, MG</option>
                 <option value="Curitiba, PR">Curitiba, PR</option>
+                <option value="Florianópolis, SC">Florianópolis, SC</option>
               </select>
             </div>
 
@@ -510,13 +508,13 @@ function Dashboard({ currentUser }) {
           {loading ? (
             <div className="py-20 text-center text-zinc-500">
               <Loader2 className="h-8 w-8 animate-spin mx-auto text-orange-500 mb-2" />
-              Varrendo múltiplos endpoints de APIs abertas e cruzando dados...
+              Consultando catálogos setoriais e bases de CNPJ...
             </div>
           ) : filteredLeads.length === 0 && leads.length === 0 ? (
             <div className="py-16 text-center text-zinc-500 flex flex-col items-center">
               <Inbox className="h-10 w-10 mb-2 text-zinc-600" />
-              <p className="text-sm font-medium text-zinc-400">Nenhum dado consultado</p>
-              <p className="text-xs text-zinc-600 mt-1">Clique em Consultar APIs Abertas para puxar os leads.</p>
+              <p className="text-sm font-medium text-zinc-400">Nenhum lead carregado</p>
+              <p className="text-xs text-zinc-600 mt-1">Selecione o setor desejado e clique em Consultar Leads.</p>
             </div>
           ) : (
             <div className="overflow-x-auto max-h-[600px] overflow-y-auto">

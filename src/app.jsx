@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão Funcional Completa com Exportação Corrigida
+ * LEADFINDER — Versão Atualizada com Nichos de E-commerce e Vendas Online
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -396,11 +396,15 @@ function Dashboard({ currentUser }) {
                 className="w-full bg-[#0d0e12] border border-orange-500/80 text-zinc-100 text-xs px-3 py-2.5 focus:outline-none"
               >
                 <option value="">Todos os nichos</option>
+                <option value="E-commerce & Lojas Virtuais">E-commerce & Lojas Virtuais</option>
+                <option value="Varejo Online (D2C)">Varejo Online (D2C)</option>
+                <option value="Moda & Acessórios Online">Moda & Acessórios Online</option>
+                <option value="Marketplaces & Vendas Digitais">Marketplaces & Vendas Digitais</option>
+                <option value="Tecnologia & SaaS">Tecnologia & SaaS</option>
                 <option value="Odontologia">Odontologia</option>
                 <option value="Advocacia">Advocacia</option>
                 <option value="Clínicas Médicas">Clínicas Médicas</option>
                 <option value="Contabilidade">Contabilidade</option>
-                <option value="Tecnologia & SaaS">Tecnologia & SaaS</option>
                 <option value="Academias & Fitness">Academias & Fitness</option>
                 <option value="Imobiliárias">Imobiliárias</option>
                 <option value="Logística">Logística</option>

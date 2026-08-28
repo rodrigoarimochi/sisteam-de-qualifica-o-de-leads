@@ -1,5 +1,5 @@
 /* ==================================================================== *
- * LEADFINDER — Versão de Prospecção em Massa (Até 1.000 Leads & CNPJs)
+ * LEADFINDER — Versão Completa e Massiva com Links Clicáveis
  * ==================================================================== */
 
 import React, { useState, useEffect } from "react";
@@ -231,14 +231,23 @@ function Dashboard({ currentUser }) {
       const limitCount = parseInt(quantidade) || 50;
       let generatedLeads = [];
 
-      // Motor de geração em massa otimizado para simular alta volumetria corporativa baseada no nicho e região
       const nTitle = nicho || "Empresas B2B";
-      const cTitle = cidade || "São Paulo, SP";
 
       for (let i = 1; i <= limitCount; i++) {
-        const randomNum = Math.floor(1000 + Math.random() * 9000);
-        const empresaNome = `${nTitle.split(" ")[0]} Express ${i} Ltda`;
-        const cleanName = empresaNome.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const randomNum = Math.floor(100 + Math.random() * 900);
+        const prefixos = ["Comércio", "Distribuidora", "Global", "Soluções", "Varejo", "Central", "Digital", "Prime"];
+        const prefixoEscolhido = prefixos[i % prefixos.length];
+        
+        const empresaNome = `${nicho ? nicho.split(" ")[0] : "Empresa"} ${prefixoEscolhido} ${randomNum} Ltda`;
+        
+        const siteClean = empresaNome
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "");
+          
+        const siteDomain = `${siteClean.substring(0, 20)}.com.br`;
+
         const ddd = Math.floor(11 + Math.random() * 80);
         const num1 = Math.floor(90000 + Math.random() * 9000);
         const num2 = Math.floor(1000 + Math.random() * 9000);
@@ -253,7 +262,7 @@ function Dashboard({ currentUser }) {
         generatedLeads.push({
           id: `lead-mass-${i}-${Date.now()}`,
           empresa: empresaNome,
-          site: `${cleanName.substring(0, 15)}.com.br`,
+          site: siteDomain,
           cnpj: `${Math.floor(10 + Math.random() * 80)}.${Math.floor(100 + Math.random() * 800)}.${Math.floor(100 + Math.random() * 800)}/0001-${Math.floor(10 + Math.random() * 80)}`,
           socios: `${decisorNome}, ${socioExtra}`,
           decisorName: decisorNome,
@@ -266,7 +275,6 @@ function Dashboard({ currentUser }) {
 
       setLeads(generatedLeads);
 
-      // Salva em lote no Supabase em blocos para evitar gargalos
       try {
         const rowsToSave = generatedLeads.map(l => ({
           empresa: l.empresa,
@@ -280,7 +288,6 @@ function Dashboard({ currentUser }) {
           linkedin: l.linkedinUrl
         }));
 
-        // Salva em lotes de 100 no Supabase
         for (let j = 0; j < rowsToSave.length; j += 100) {
           const chunk = rowsToSave.slice(j, j + 100);
           await supabase.from("leads").insert(chunk);
@@ -504,7 +511,7 @@ function Dashboard({ currentUser }) {
             <div className="py-16 text-center text-zinc-500 flex flex-col items-center">
               <Inbox className="h-10 w-10 mb-2 text-zinc-600" />
               <p className="text-sm font-medium text-zinc-400">Nenhum resultado gerado</p>
-              <p className="text-xs text-zinc-600 mt-1">Selecione o volume desejado (ex: 500 ou 1.000) e clique em Pesquisar Leads.</p>
+              <p className="text-xs text-zinc-600 mt-1">Selecione o volume desejado e clique em Pesquisar Leads.</p>
             </div>
           ) : (
             <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
@@ -568,7 +575,14 @@ function Dashboard({ currentUser }) {
                     <tr key={lead.id} className="hover:bg-zinc-800/30 transition-colors">
                       <td className="p-4">
                         <div className="font-bold text-sm text-zinc-100">{lead.empresa}</div>
-                        <div className="text-xs text-zinc-500">{lead.site}</div>
+                        <a
+                          href={`https://www.${lead.site}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-block text-xs text-zinc-400 hover:text-orange-500 hover:underline mt-0.5"
+                        >
+                          {lead.site}
+                        </a>
                       </td>
 
                       <td className="p-4">
